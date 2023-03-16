@@ -2,8 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FrontPG extends JFrame {
@@ -17,45 +19,8 @@ public class FrontPG extends JFrame {
     private JPanel panelAll;
     private JButton clearBtn;
     private JButton exit;
-
-    private static List<String> dictionary = Arrays.asList("apple", "banana", "pear", "orange", "peach");
-
-    // A function to generate all permutations of a given string
-    private static List<String> generatePermutations(String str)
-    {
-        List<String> permutations = new ArrayList<>();
-
-        if (str == null || str.length() == 0)
-        {
-            permutations.add("");
-            return permutations;
-        }
-
-        char first = str.charAt(0);
-        String remainder = str.substring(1);
-        List<String> words = generatePermutations(remainder);
-        for (String word : words)
-        {
-            for (int i = 0; i <= word.length(); i++)
-            {
-                String permutation = insertCharAt(word, first, i);
-                permutations.add(permutation);
-            }
-        }
-
-        return permutations;
-    }
-
-    // A helper function to insert a character at a specific index in a string
-    private static String insertCharAt(String str, char c, int index)
-    {
-        String left = str.substring(0, index);
-        String right = str.substring(index);
-        return left + c + right;
-    }
-
-    // A function to unscramble a word and return a list of valid words
-    
+    private JButton addButton;
+    private JButton searchButton;
 
 
     public  FrontPG(){
@@ -66,7 +31,7 @@ public class FrontPG extends JFrame {
         setMinimumSize(new Dimension(600,400));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-       // mergeLabels();
+        // mergeLabels();
         setVisible(true);
 
 
@@ -76,50 +41,120 @@ public class FrontPG extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                int userChoice = JOptionPane.showConfirmDialog(panelAll, "Do you really want to close?", "Let try one more Word..!", JOptionPane.YES_NO_OPTION);
+
+                if (userChoice == JOptionPane.YES_OPTION) {
+                    // Close the program
                     System.exit(0);
+                }
+                else if(userChoice == JOptionPane.NO_OPTION)
+                {
+
+                }
             }
         });
 
 
-        ActionListener listener = new ActionListener() {
+
+
+        exit.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+            }
+        });
+        clearBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textField1.setText("");
+                textArea1.setText("");
+                textField1.setEditable(true);
+                textField1.setEnabled(true);
+                radioButton2.setSelected(false);
+                radioButton1.setSelected(false);
+            }
+        });
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textField1.setEnabled(false);
+                textField1.setEditable(false);
+                String input = textField1.getText();
+                List<String> unscrambledWords = generateUnscrambledWords(input);
+                displayUnscrambledWords(unscrambledWords);
+
+            }
+        });
+
+        addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                        textField1.setEnabled(false);
-                        textField1.setEditable(false);
-                        textField1.setSelectionEnd(0);
-                        String word = textField1.getText();
-                        if(radioButton1.isSelected())
-                        {
-                            textArea1.setText("");
-                            List<String> unscrambledWords = unscrambleWord(word);
-                            textArea1.setText(String.valueOf(unscrambledWords));
-                        }
-                        if(radioButton2.isSelected())
-                        {
-                            textArea1.setText("");
-                            textArea1.setText("helloo");
-                        }
-
+                String input =  textField1.getText();
+             int n =  Integer.parseInt(JOptionPane.showInputDialog(panelAll,"Word to be Added :-",input  ));
+            if(n== JOptionPane.YES_OPTION)
+            {
+                //YES code here
             }
-        };
-        radioButton1.addActionListener(listener);
-        radioButton2.addActionListener(listener);
-
-
-
-
-
-
-
-
-
-
-
+            }
+        });
     }
 
 
 
+
+    private List<String> generateUnscrambledWords(String input) {
+        List<String> unscrambledWords = new ArrayList<>();
+        generateCombos("", input, unscrambledWords);
+        return unscrambledWords;
+    }
+
+
+    private void checkWord(String word, List<String> unscrambledWords) {
+        try {
+
+            String url = "jdbc:mysql://localhost:3306/frenzy";
+            String user = "root";
+            String pass = "Kushal@123456";
+            Connection conn;
+            conn = DriverManager.getConnection(url, user, pass);
+            Statement stmt = conn.createStatement();
+            String query = "SELECT word FROM dictionary WHERE word = '" + word + "'";
+            ResultSet rs = stmt.executeQuery(query);
+            if (rs.next()) {
+                unscrambledWords.add(word);
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void displayUnscrambledWords(List<String> unscrambledWords) {
+        StringBuilder sb = new StringBuilder();
+        for (String word : unscrambledWords) {
+            textArea1.append(word);
+            textArea1.append("\n");
+        }
+
+    }
+
+
+    private void generateCombos(String prefix, String remaining, List<String> unscrambledWords) {
+
+        if (remaining.length() == 0) {
+
+                checkWord(prefix, unscrambledWords);
+
+
+        }
+        for (int i = 0; i < remaining.length(); i++) {
+            String newPrefix = prefix + remaining.charAt(i);
+            String newRemaining = remaining.substring(0, i) + remaining.substring(i + 1);
+            generateCombos(newPrefix, newRemaining, unscrambledWords);
+
+        }
+    }
 }
-
-

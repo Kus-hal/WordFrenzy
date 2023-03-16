@@ -1,7 +1,5 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.List;
 
 public class dictDAO {
 
@@ -26,36 +24,17 @@ public class dictDAO {
         }
         return null;
     }
-    public void Disconnect()
-    {
-        try
-        {
+    public void Disconnect() {
+        try {
             conn.close();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }}
 
 
 
 
-    private static List<String> unscrambleWord(String word)
-    {
-        List<String> unscrambledWords = new ArrayList<>();
 
-        // Generate all permutations of the word
-        List<String> permutations = generatePermutations(word);
 
-        // Check each permutation against the dictionary
-        for (String permutation : permutations)
-        {
-            if (dictionary.contains(permutation))
-            {
-                unscrambledWords.add(permutation);
-            }
-        }
 
-        return unscrambledWords;
-    }
-}
