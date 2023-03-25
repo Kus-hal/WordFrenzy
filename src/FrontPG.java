@@ -2,8 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,26 +52,7 @@ public class FrontPG extends JFrame {
             }
         });
 
-
-
-
-        exit.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                super.componentResized(e);
-            }
-        });
-        clearBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                textField1.setText("");
-                textArea1.setText("");
-                textField1.setEditable(true);
-                textField1.setEnabled(true);
-                radioButton2.setSelected(false);
-                radioButton1.setSelected(false);
-            }
-        });
+        
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
