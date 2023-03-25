@@ -3,8 +3,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 
 public class FrontPG extends JFrame {
     private JTextField textField1;
@@ -19,6 +19,7 @@ public class FrontPG extends JFrame {
     private JButton exit;
     private JButton addButton;
     private JButton searchButton;
+    private Map<Character, Set<String>> wordMap = new HashMap<>();
 
 
     public  FrontPG(){
@@ -38,7 +39,7 @@ public class FrontPG extends JFrame {
                 if (userChoice == JOptionPane.YES_OPTION){
                     System.exit(0);
                 }
-<<<<<<< HEAD
+
                 else if(userChoice == JOptionPane.NO_OPTION)
                 {
 
@@ -46,10 +47,8 @@ public class FrontPG extends JFrame {
             }
         });
 
-        
-=======
-            }
-        });
+
+
         clearBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -61,7 +60,7 @@ public class FrontPG extends JFrame {
                 radioButton1.setSelected(false);
             }
         });
->>>>>>> 3942fe280c0c376cb6dc43b44089c0f8739f1e04
+
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -87,43 +86,85 @@ public class FrontPG extends JFrame {
 
     private List<String> generateUnscrambledWords(String input) {
         List<String> unscrambledWords = new ArrayList<>();
-        generateCombos("", input, unscrambledWords);
+        Set<Character> usedChars = new HashSet<>();
+
+        for (char c : input.toCharArray()) {
+            if (usedChars.contains(c)) {
+                continue;
+            }
+            usedChars.add(c);
+
+            Set<String> words = wordMap.get(c);
+            if (words == null) {
+                words = getWordsStartingWith(c);
+                wordMap.put(c, words);
+            }
+
+            List<String> combos = new ArrayList<>();
+            generateCombos("", input, combos);
+
+            for (String combo : combos) {
+                if (words.contains(combo)) {
+                    unscrambledWords.add(combo);
+                }
+            }
+        }
         return unscrambledWords;
     }
 
+
+
     private void checkWord(String word, List<String> unscrambledWords) {
-        try {
-            dictDAO d = new dictDAO();
-            Connection con = d.Connect();
-            Statement stmt = con.createStatement();
-            String query = "SELECT word FROM dictionary WHERE word = '" + word + "'";
-            ResultSet rs = stmt.executeQuery(query);
-            if (rs.next()) {
+        if (word.length() > 1) {
+            Set<String> initialWords = wordMap.get(word.charAt(0));
+            if (initialWords == null) {
+                initialWords = getWordsStartingWith(word.charAt(0));
+                wordMap.put(word.charAt(0), initialWords);
+            }
+            if (initialWords.contains(word)) {
                 unscrambledWords.add(word);
             }
-            rs.close();
-            stmt.close();
-            con.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
     private void displayUnscrambledWords(List<String> unscrambledWords) {
         StringBuilder sb = new StringBuilder();
         for (String word : unscrambledWords) {
-            textArea1.append(word + "\n");
+            textArea1.append(word);
+            textArea1.append("\n");
+        }
+    }
+    private void generateCombos(String prefix, String remaining, List<String> unscrambledWords) {
+        if (remaining.length() == 0) {
+            checkWord(prefix, unscrambledWords);
+        } else {
+            for (int i = 0; i < remaining.length(); i++) {
+                String newPrefix = prefix + remaining.charAt(i);
+                String newRemaining = remaining.substring(0, i) + remaining.substring(i + 1);
+                generateCombos(newPrefix, newRemaining, unscrambledWords);
+            }
         }
     }
 
-    private void generateCombos(String prefix, String remaining, List<String> unscrambledWords) {
-        if (remaining.length() == 0) {
-                checkWord(prefix, unscrambledWords);
+    private Set<String> getWordsStartingWith(char c) {
+        Set<String> words = new HashSet<>();
+        try {
+            String url = "jdbc:mysql://localhost:3306/frenzy";
+            String user = "root";
+            String pass = "Kushal@123456";
+            Connection conn;
+            conn = DriverManager.getConnection(url, user, pass);
+            Statement stmt = conn.createStatement();
+            String query = "SELECT word FROM dictionary WHERE word LIKE '" + c + "%'";
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                words.add(rs.getString("word"));
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        for (int i = 0; i < remaining.length(); i++) {
-            String newPrefix = prefix + remaining.charAt(i);
-            String newRemaining = remaining.substring(0, i) + remaining.substring(i + 1);
-            generateCombos(newPrefix, newRemaining, unscrambledWords);
-        }
-    }
-}
+        return words;
+    }}
