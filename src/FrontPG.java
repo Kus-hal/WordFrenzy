@@ -2,14 +2,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FrontPG extends JFrame {
     private JTextField textField1;
-    private JRadioButton radioButton1;
-    private JRadioButton radioButton2;
     private JTextArea textArea1;
     private JLabel labelWord;
     private JLabel lableFrenzy;
@@ -47,27 +48,38 @@ public class FrontPG extends JFrame {
                 textArea1.setText("");
                 textField1.setEditable(true);
                 textField1.setEnabled(true);
-                radioButton2.setSelected(false);
-                radioButton1.setSelected(false);
             }
         });
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                textArea1.setText(null);
                 textField1.setEnabled(false);
                 textField1.setEditable(false);
                 String input = textField1.getText();
                 List<String> unscrambledWords = generateUnscrambledWords(input);
                 displayUnscrambledWords(unscrambledWords);
+                if(textArea1.getText().equals("")){
+                    textArea1.setText("No word found");
+                }
             }
         });
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String input =  textField1.getText();
-                int n =  Integer.parseInt(JOptionPane.showInputDialog(panelAll,"Word to be Added :-",input  ));
-                if(n== JOptionPane.YES_OPTION){
-                    //YES code here
+                String input= JOptionPane.showInputDialog(panelAll,"Word to be Added :-",textField1.getText());
+                if(input!=null){
+                    textArea1.setText(null);
+                    dictDAO d = new dictDAO();
+                    int res = d.addToDict(input);
+                    if(res==0){
+                        textArea1.setText("Word already present in dictionary");
+                    }
+                    else if(res == -1){
+                        textArea1.setText("Word cannot be added");
+                    }
+                    textArea1.append(input);
+                    textArea1.append("\n"+ res +" word added successfully");
                 }
             }
         });

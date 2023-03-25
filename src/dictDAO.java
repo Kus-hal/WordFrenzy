@@ -1,5 +1,6 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.sql.*;
 
 public class dictDAO {
     private String url = DBCredential.url;
@@ -23,4 +24,47 @@ public class dictDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }}
+    }
+    public int addToDict(String word){
+        this.Connect();
+        if(!word.equals("")){
+            try{
+                String query = "SELECT word FROM dictionary WHERE word=?;";
+                PreparedStatement pst = conn.prepareStatement(query);
+                pst.setString(1,word);
+                ResultSet rs = pst.executeQuery();
+                if(rs.next()){
+                    return 0;
+                }
+                else{
+                    pst.close();
+                    query = "INSERT INTO dictionary VALUES(?);";
+                    pst = conn.prepareStatement(query);
+                    pst.setString(1,word);
+                    int res = pst.executeUpdate();
+                    pst.close();
+
+                    String fileName = "All words.txt";
+                    try {
+                        FileWriter fw = new FileWriter(fileName, true);
+                        BufferedWriter bw = new BufferedWriter(fw);
+
+                        bw.newLine();
+                        bw.write(word);
+
+                        bw.close();
+                        fw.close();
+                    }
+                    catch (Exception p) {
+                        System.out.println("An error occurred while trying to append words to the file: " + p.getMessage());
+                    }
+                    return res;
+                }
+            }
+            catch (Exception ex){
+                ex.printStackTrace();
+            }
+        }
+        return -1;
+    }
+}
