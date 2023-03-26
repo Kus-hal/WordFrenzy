@@ -1,5 +1,5 @@
 public class DBCredential {
     public static String url = "jdbc:mysql://localhost:3306/frenzy";
     public static String user = "root";
-    public static String pass = "Harsh@5488";
+    public static String pass = "Kushal@123456";
 }

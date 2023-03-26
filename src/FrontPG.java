@@ -87,33 +87,33 @@ public class FrontPG extends JFrame {
         setVisible(true);
     }
 
-    private List<String> generateUnscrambledWords(String input) {
-        List<String> unscrambledWords = new ArrayList<>();
-        Set<Character> usedChars = new HashSet<>();
+        private List<String> generateUnscrambledWords(String input) {
+            List<String> unscrambledWords = new ArrayList<>();
+            Set<Character> usedChars = new HashSet<>();
 
-        for (char c : input.toCharArray()) {
-            if (usedChars.contains(c)) {
-                continue;
-            }
-            usedChars.add(c);
-
-            Set<String> words = wordMap.get(c);
-            if (words == null) {
-                words = getWordsStartingWith(c);
-                wordMap.put(c, words);
-            }
-
-            List<String> combos = new ArrayList<>();
-            generateCombos("", input, combos);
-
-            for (String combo : combos) {
-                if (words.contains(combo)) {
-                    unscrambledWords.add(combo);
+            for (char c : input.toCharArray()) {
+                if (usedChars.contains(c)) {
+                    continue;
                 }
+                usedChars.add(c);
+
+                Set<String> words = wordMap.get(c);
+                if (words == null) {
+                    words = getWordsStartingWith(c);
+                    wordMap.put(c, words);
+                }
+
+                List<String> combos = new ArrayList<>();
+                generateCombos("", input, combos);
+
+                for (String combo : combos) {
+                    if (words.contains(combo)) {
+                        unscrambledWords.add(combo);
+                    }
+               }
             }
+            return unscrambledWords;
         }
-        return unscrambledWords;
-    }
 
     private void checkWord(String word, List<String> unscrambledWords) {
         if (word.length() > 1) {
@@ -122,7 +122,7 @@ public class FrontPG extends JFrame {
                 initialWords = getWordsStartingWith(word.charAt(0));
                 wordMap.put(word.charAt(0), initialWords);
             }
-            if (initialWords.contains(word)) {
+            if (initialWords.contains(word) && !unscrambledWords.contains(word)) {
                 unscrambledWords.add(word);
             }
         }
