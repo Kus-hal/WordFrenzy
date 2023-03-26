@@ -2,15 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-<<<<<<< HEAD
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-=======
-import java.sql.*;
->>>>>>> 560a571703b19f8694869ae2930943485be35bad
 import java.util.List;
 import java.util.*;
 
@@ -27,7 +22,6 @@ public class FrontPG extends JFrame {
     private JButton searchButton;
     private Map<Character, Set<String>> wordMap = new HashMap<>();
 
-
     public  FrontPG(){
         setTitle("Home Page");
         setContentPane(panelAll);
@@ -39,27 +33,18 @@ public class FrontPG extends JFrame {
         exit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                int userChoice = JOptionPane.showConfirmDialog(panelAll, "Do you really want to close?", "Let try one more Word..!", JOptionPane.YES_NO_OPTION);
-
+                int userChoice = JOptionPane.showConfirmDialog(panelAll, "Do you really want to close?", "Wanna try one more Word..!", JOptionPane.YES_NO_OPTION);
                 if (userChoice == JOptionPane.YES_OPTION){
                     System.exit(0);
-                }
-
-                else if(userChoice == JOptionPane.NO_OPTION)
-                {
-
                 }
             }
         });
 
-
-
         clearBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                textField1.setText("");
-                textArea1.setText("");
+                textField1.setText(null);
+                textArea1.setText(null);
                 textField1.setEditable(true);
                 textField1.setEnabled(true);
             }
@@ -79,6 +64,7 @@ public class FrontPG extends JFrame {
                 }
             }
         });
+
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -129,8 +115,6 @@ public class FrontPG extends JFrame {
         return unscrambledWords;
     }
 
-
-
     private void checkWord(String word, List<String> unscrambledWords) {
         if (word.length() > 1) {
             Set<String> initialWords = wordMap.get(word.charAt(0));
@@ -145,10 +129,8 @@ public class FrontPG extends JFrame {
     }
 
     private void displayUnscrambledWords(List<String> unscrambledWords) {
-        StringBuilder sb = new StringBuilder();
         for (String word : unscrambledWords) {
-            textArea1.append(word);
-            textArea1.append("\n");
+            textArea1.append(word + "\n");
         }
     }
     private void generateCombos(String prefix, String remaining, List<String> unscrambledWords) {
@@ -166,16 +148,13 @@ public class FrontPG extends JFrame {
     private Set<String> getWordsStartingWith(char c) {
         Set<String> words = new HashSet<>();
         try {
-            String url = "jdbc:mysql://localhost:3306/frenzy";
-            String user = "root";
-            String pass = "Kushal@123456";
-            Connection conn;
-            conn = DriverManager.getConnection(url, user, pass);
+            dictDAO d = new dictDAO();
+            Connection conn = d.Connect();
             Statement stmt = conn.createStatement();
             String query = "SELECT word FROM dictionary WHERE word LIKE '" + c + "%'";
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
-                words.add(rs.getString("word"));
+                words.add(rs.getString(1));
             }
             rs.close();
             stmt.close();
@@ -184,4 +163,5 @@ public class FrontPG extends JFrame {
             e.printStackTrace();
         }
         return words;
-    }}
+    }
+}

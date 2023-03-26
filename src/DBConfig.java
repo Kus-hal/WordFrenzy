@@ -26,7 +26,7 @@ public class DBConfig {
 
                 query = "CREATE TABLE dictionary (word varchar(255));";
                 stmt.executeUpdate(query);
-                addwords(con);
+                addWords(con);
             }
             else{
                 query = "USE frenzy;";
@@ -41,7 +41,7 @@ public class DBConfig {
                 if(!list.contains("dictionary")){
                     query = "CREATE TABLE dictionary (word varchar(255));";
                     stmt.executeUpdate(query);
-                    addwords(con);
+                    addWords(con);
                 }
             }
             res.close();
@@ -53,7 +53,7 @@ public class DBConfig {
         }
     }
 
-    private void addwords(Connection con){
+    private void addWords(Connection con){
         try{
             String filePath = "All words.txt";
             String sql = "INSERT INTO dictionary VALUES (?);";

@@ -65,6 +65,7 @@ public class dictDAO {
                 ex.printStackTrace();
             }
         }
+        this.Disconnect();
         return -1;
     }
 }
