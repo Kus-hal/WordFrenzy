@@ -35,10 +35,10 @@ public class FrontPage extends JFrame{
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
 
-        img = new ImageIcon("./Image/Logo.png");
+        img = new ImageIcon(getClass().getClassLoader().getResource("Logo.png"));
         labelPic.setIcon(img);
 
-        img1 = new ImageIcon("./Image/Icon-1.png");
+        img1 = new ImageIcon(getClass().getClassLoader().getResource("Icon-1.png"));
         setIconImage(img1.getImage());
         btnExit.addActionListener(new ActionListener() {
             @Override
