@@ -12,6 +12,6 @@ public class homePage {
             ex.printStackTrace();
         }
         du.dispose();
-        FrontPG h = new FrontPG();
+        FrontPage f = new FrontPage();
     }
 }
