@@ -69,8 +69,8 @@ public class FrontPage extends JFrame{
                 String input = textSearch.getText();
                 List<String> unscrambledWords = generateUnscrambledWords(input);
                 displayUnscrambledWords(unscrambledWords);
-                if(textSearch.getText().equals("")){
-                    textSearch.setText("No word found");
+                if(textAreaRes.getText().equals("")){
+                    textAreaRes.setText("No word found");
                 }
             }
         });
