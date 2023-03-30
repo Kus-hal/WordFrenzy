@@ -26,4 +26,5 @@ Words can be added to the Dictionary (If not present)</br>
 ![WF-SS-4](https://user-images.githubusercontent.com/95761669/228206262-865856b0-7878-4266-971d-ab0e78dd0371.png)
 
 For Example: I have added my name in it</br>
-![WF-SS-5](https://user-images.githubusercontent.com/95761669/228206488-b844e84f-1f4f-45ec-a8b2-951edd0a95e2.png)
+![WF-SS-5](https://user-images.githubusercontent.com/88149584/228743152-3d05a6ab-a181-493d-ba2a-cb0a5400f8aa.jpg)
+
